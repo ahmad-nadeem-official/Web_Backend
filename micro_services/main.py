@@ -1,8 +1,7 @@
 import smtplib
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from flask_mail import Mail, Message
 from datetime import datetime
 
 
@@ -12,27 +11,19 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://neondb_owner:npg_gUZdJnv5D
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
-def send_thank_you_email(to_email):
-    from_email = "ahmadnadeem701065@gmail.com"
-    password = "*******************"  # Replace with your actual password
 
-    subject = "Thanks for Subscribing!"
-    body = f"Hi {to_email}!\n\nThanks for subscribing to our newsletter. Stay tuned for updates!\n\n- Ahmad Nadeem"
+'''mail configuration'''
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'ahmadnadeem701065@gmail.com'
+app.config['MAIL_PASSWORD'] = 'mylw crjy lvru bnsd'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 
-    msg = MIMEMultipart()
-    msg['From'] = from_email
-    msg['To'] = to_email
-    msg['Subject'] = subject
-
-    msg.attach(MIMEText(body, 'plain'))
-
-    # Gmail SMTP
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
-        server.login(from_email, password)
-        server.sendmail(from_email, to_email, msg.as_string())
-
+mail = Mail(app)
 
 # Define model correctly
+# -----------------------
 class Newsletter(db.Model):
     email = db.Column(db.String, primary_key=True, nullable=False)
 
@@ -52,47 +43,79 @@ class Contact(db.Model):
     
 
 # Ensure tables are created
+# -----------------------
 with app.app_context():
     db.create_all()
 
+
+# Routes
+# -----------------------
 @app.route('/')
 def index():
     return "Welcome to the backend Service!"
 
-# Define route correctly
 @app.route('/subscribe', methods=['POST'])
 def subscribe():
     data = request.json
     email = data.get('email')
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
 
     existing = Newsletter.query.filter_by(email=email).first()
     if not existing:
-       new_subscriber = Newsletter(email=email)
-       db.session.add(new_subscriber)
-       db.session.commit()
-       return jsonify({"message": "Subscribed successfully!"}), 201
-    else:
-        return jsonify({"message": "Already subscribed."}), 200
-    
+        db.session.add(Newsletter(email=email))
+        db.session.commit()
+
+    # Always send confirmation
+    try:
+        msg = Message(
+            'Newsletter Subscription Confirmation',
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[email]
+        )
+        msg.body = f"Hi {email},\n\nThanks for subscribing to our newsletter! We'll keep you updated on upcoming events and services.\n\nBest regards,\nMuhammad Ahmad Nadeem"
+        mail.send(msg)
+    except Exception as e:
+        return jsonify({"error": f"Failed to send email: {str(e)}"}), 500
+
+    return jsonify({"message": "Subscribed and confirmation email sent!"}), 201
+
 
 @app.route('/meeting', methods=['POST'])
 def meet():
     data = request.json
     name = data.get('name')
     email = data.get('email')
-    date_str = data.get('date')  # e.g., "2023-10-01T14:30"
+    date_str = data.get('date')
     message = data.get('message')
+
+    if not all([name, email, date_str]):
+        return jsonify({"error": "Name, email, and date are required"}), 400
 
     try:
         date_obj = datetime.fromisoformat(date_str)
     except ValueError:
         return jsonify({"error": "Invalid date format"}), 400
 
-    new_meeting = Meeting(name=name, email=email, date=date_obj, message=message)
-    db.session.add(new_meeting)
+    db.session.add(Meeting(name=name, email=email, date=date_obj, message=message))
     db.session.commit()
 
-    return jsonify({"message": "Meeting scheduled successfully!"}), 201
+    try:
+        msg = Message(
+            'Meeting Scheduled',
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[email]
+        )
+        msg.body = (
+            f"Hi {name},\n\nYou have successfully scheduled a meeting on {date_obj.strftime('%Y-%m-%d %H:%M:%S')}."
+            "\nOur team will contact you soon.\n\nBest regards,\nMuhammad Ahmad Nadeem"
+        )
+        mail.send(msg)
+    except Exception as e:
+        return jsonify({"error": f"Failed to send email: {str(e)}"}), 500
+
+    return jsonify({"message": "Meeting scheduled and email sent!"}), 201
+
 
 @app.route('/contact', methods=['POST'])
 def contact():
@@ -102,12 +125,30 @@ def contact():
     subject = data.get('subject')
     message = data.get('message')
 
-    new_contact = Contact(name=name, email=email, subject=subject, message=message)
-    db.session.add(new_contact)
+    if not all([name, email, subject, message]):
+        return jsonify({"error": "All fields are required"}), 400
+
+    db.session.add(Contact(name=name, email=email, subject=subject, message=message))
     db.session.commit()
 
-    return jsonify({"message": "Contact message sent successfully!"}), 201
+    try:
+        msg = Message(
+            'Contact Confirmation',
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[email]
+        )
+        msg.body = (
+            f"Hi {name},\n\nThank you for reaching out about \"{subject}\"."
+            f"\nWe received your message:\n\n{message}\n\nWe’ll get back to you shortly."
+            "\n\nBest regards,\nMuhammad Ahmad Nadeem"
+        )
+        mail.send(msg)
+    except Exception as e:
+        return jsonify({"error": f"Failed to send email: {str(e)}"}), 500
 
+    return jsonify({"message": "Message received and confirmation email sent!"}), 201
 
+#Run app
+# -----------------------
 if __name__ == "__main__":
     app.run(debug=True)
