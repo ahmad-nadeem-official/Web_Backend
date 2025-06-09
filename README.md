@@ -2,10 +2,10 @@
 
 Welcome to **WEB Backend Service**, a robust and scalable Flask-based backend designed to power your web applications with seamless email notifications and database management! This project provides APIs for newsletter subscriptions, meeting scheduling, and contact form submissions, all integrated with PostgreSQL for data persistence and Gmail SMTP for email confirmations. Built with a focus on simplicity and efficiency, this backend is perfect for developers looking to deploy a reliable server-side solution! 🚀  
 
-🔗 **Repository Name**: WEB Backend Service  
-📅 **Last Updated**: June 09, 2025
-👨‍💻 **Author**: Ahmad Nadeem 
-🔗 **API URL**: `https://ahmadnadeem.vercel.app/`
+- 🔗 **Repository Name**: WEB Backend Service  
+- 📅 **Last Updated**: June 09, 2025
+- 👨‍💻 **Author**: Ahmad Nadeem 
+- 🔗 **API URL**: `https://ahmadnadeem.vercel.app/`
   
 
 ---
