@@ -84,9 +84,9 @@ The app will start in debug mode on `http://127.0.0.1:5000/`
 ### Step 5: Test the APIs  
 Use tools like Postman or curl or request to test the endpoints, 
 or you can see test.py file for testing your api you will be guided there, 
-- **POST /subscribe**: {"email": "user@example.com"}  
-- **POST /meeting**: {"name": "John", "email": "john@example.com", "date": "2025-06-10T10:00:00", "message": "Discuss project"}  
-- **POST /contact**: {"name": "Jane", "email": "jane@example.com", "subject": "Support", "message": "Need help!"}  
+- **POST /subscribe**: `{"email": "user@example.com"}`  
+- **POST /meeting**: `{"name": "John", "email": "john@example.com", "date": "2025-06-10T10:00:00", "message": "Discuss project"}`  
+- **POST /contact**: `{"name": "Jane", "email": "jane@example.com", "subject": "Support", "message": "Need help!"}`  
 
 ---
 
