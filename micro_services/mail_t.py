@@ -22,7 +22,7 @@ def index():
         recipients=['ahmadnadeem701065@gmail.com']
     )
     msg.body = 'Hallo, guten Tag. Das ist eine Test-E-Mail.'
-    mail.send(msg)
+    # mail.send(msg)
     return 'Email sent successfully!'
 
 if __name__ == '__main__':

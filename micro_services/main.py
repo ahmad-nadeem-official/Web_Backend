@@ -1,13 +1,15 @@
 import smtplib
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from datetime import datetime
 
 
 app = Flask(__name__)
+CORS(app)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://neondb_owner:npg_gUZdJnv5DWz7@ep-purple-leaf-a4rxbe21-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require"
+app.config["SQLALCHEMY_DATABASE_URI"] = "" # you can set your database URI here, e.g., 'sqlite:///site.db' or 'postgresql://user:password@localhost/dbname'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
@@ -86,14 +88,14 @@ def meet():
     data = request.json
     name = data.get('name')
     email = data.get('email')
-    date_str = data.get('date')
+    date = data.get('date')
     message = data.get('message')
 
-    if not all([name, email, date_str]):
+    if not all([name, email, date]):
         return jsonify({"error": "Name, email, and date are required"}), 400
 
     try:
-        date_obj = datetime.fromisoformat(date_str)
+        date_obj = datetime.fromisoformat(date)
     except ValueError:
         return jsonify({"error": "Invalid date format"}), 400
 

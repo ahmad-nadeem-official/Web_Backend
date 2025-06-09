@@ -3,9 +3,9 @@ import requests
 BASE_URL = 'http://127.0.0.1:5000'
 
 def test_newsletter_subscription():
-    url = 'http://127.0.0.1:5000/subscribe'
+    url = 'https://ahmadnadeem.vercel.app/subscribe'
     data = {
-        'email': 'uk47brust@gmail.com'
+        'email': 'ahmadnadee095@gmail.com'
     }
     response = requests.post(url, json=data)
     print("Newsletter Subscription")
@@ -47,7 +47,7 @@ def test_contact_message():
         print("Response Error:", e)
 
 if __name__ == '__main__':
-    test_contact_message()
+    # test_contact_message()
     test_newsletter_subscription()
-    print()
-    test_meeting_schedule()
+    # print()
+    # test_meeting_schedule()
