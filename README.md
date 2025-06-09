@@ -10,9 +10,9 @@ Welcome to **WEB Backend Service**, a robust and scalable Flask-based backend de
 
 ---
 ## 🌐︎ endpoints of API
-- 🔗 **.1 endpoint**: `https://ahmadnadeem.vercel.app/meeting`
-- 🔗 **.2 endpoint**: `https://ahmadnadeem.vercel.app/contact`
-- 🔗 **.2 endpoint**: `https://ahmadnadeem.vercel.app/subscribe`
+- 🔗 **1 endpoint**: `https://ahmadnadeem.vercel.app/meeting`
+- 🔗 **2 endpoint**: `https://ahmadnadeem.vercel.app/contact`
+- 🔗 **3 endpoint**: `https://ahmadnadeem.vercel.app/subscribe`
 
 ---
 ## 🚀 Key Features  
